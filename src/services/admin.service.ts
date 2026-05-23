@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import { IAdmin, ICreateAdmin } from '../interfaces/admin.interface';
 import { toIAdmin } from '../mappers/admin.mapper';
-import { Admin, AdminDocument } from '../models/admin.model';
+import { User, UserDocument } from '../models/user.model';
 
 export class AdminService {
   async getAdmin(id: string): Promise<IAdmin> {
@@ -9,12 +9,12 @@ export class AdminService {
       throw new Error('Invalid admin id');
     }
 
-    const admin = await Admin.findById(id).select('-password');
+    const admin = await User.findById(id).select('-password');
     if (!admin) {
       throw new Error('Admin not found');
     }
 
-    return toIAdmin(admin as unknown as AdminDocument);
+    return toIAdmin(admin as unknown as UserDocument);
   }
 
   async createAdmin(input: ICreateAdmin): Promise<IAdmin> {
@@ -23,8 +23,8 @@ export class AdminService {
     }
 
     try {
-      const newAdmin = await Admin.create(input);
-      return toIAdmin(newAdmin as unknown as AdminDocument);
+      const newAdmin = await User.create(input);
+      return toIAdmin(newAdmin as unknown as UserDocument);
     } catch (error) {
       if (
         error instanceof Error &&

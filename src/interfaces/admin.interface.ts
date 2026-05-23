@@ -17,9 +17,14 @@ export interface ICreateAdmin {
   name?: string;
   role?: AdminRole;
   status?: AdminStatus;
-  mobile?: string;
+  mobile?: number;
   address?: IAdminAddress;
   profilePicture?: string;
+  tokens?: {
+    accessToken: string;
+    refreshToken: string;
+  };
+  lastLogin?: Date;
   isVerified?: boolean;
   isActive?: boolean;
   isBlocked?: boolean;
@@ -37,6 +42,11 @@ export interface IAdmin {
   mobile?: string;
   address?: IAdminAddress;
   profilePicture?: string;
+  tokens?: {
+    accessToken: string;
+    refreshToken: string;
+  };
+  lastLogin?: Date;
   isDeleted: boolean;
   isVerified: boolean;
   isActive: boolean;

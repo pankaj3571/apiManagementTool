@@ -1,16 +1,18 @@
 import { IAdmin, IAdminAddress } from '../interfaces/admin.interface';
-import { AdminDocument } from '../models/admin.model';
+import { UserDocument } from '../models/user.model';
 
-export function toIAdmin(doc: AdminDocument): IAdmin {
+export function toIAdmin(doc: UserDocument): IAdmin {
   return {
     id: doc._id.toString(),
     email: doc.email,
     name: doc.name || undefined,
     role: doc.role || 'admin' ,
     status: doc.status || 'active',
-    mobile: doc.mobile || undefined,
+    mobile: doc.mobile?.toString() || undefined,
     address: doc.address as IAdminAddress | undefined,
     profilePicture: doc.profilePicture || undefined,
+    tokens: doc.tokens || undefined,
+    lastLogin: doc.lastLogin || undefined,
     isDeleted: doc.isDeleted || false,
     isVerified: doc.isVerified || false,
     isActive: doc.isActive ?? true,

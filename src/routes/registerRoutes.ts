@@ -17,6 +17,18 @@ function resolveRouteSegment(folder: string, fileName: string): string {
 
 export function registerRoutes(app: Express): void {
   const routesDir = __dirname;
+
+  const rootRouteFiles = fs
+    .readdirSync(routesDir)
+    .filter((file) => /\.routes\.(ts|js)$/.test(file));
+
+  for (const file of rootRouteFiles) {
+    const modulePath = path.join(routesDir, file.replace(/\.ts$/, ''));
+    const routeModule = require(modulePath) as { default: Router };
+    app.use('/', routeModule.default);
+    console.log(`Routes mounted at / (${file})`);
+  }
+
   const folders = fs
     .readdirSync(routesDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory());
