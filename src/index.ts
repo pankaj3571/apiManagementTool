@@ -10,7 +10,7 @@ const port = Number(process.env.PORT) || 3000;
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', process.env.CLIENT_ORIGIN ?? '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, auth-token');
   if (req.method === 'OPTIONS') {
     res.sendStatus(204);
     return;

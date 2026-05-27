@@ -8,9 +8,23 @@ export const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true, minlength: 6, select: false },
     name: { type: String, trim: true },
-    role: { type: String, enum: ['admin', 'user'], default: 'admin' },
+    role: {
+      type: String,
+      enum: ['admin', 'client', 'user'],
+      required: true,
+      index: true,
+    },
+    clientId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Client',
+      index: true,
+    },
+    permissions: {
+      canCreateApis: { type: Boolean, default: false },
+      canCreateProjects: { type: Boolean, default: false },
+    },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
-    mobile: { type: Number, required: true, unique: true },
+    mobile: { type: Number, sparse: true, unique: true },
     address: {
       street: { type: String, default: '' },
       city: { type: String, default: '' },
@@ -21,26 +35,23 @@ export const userSchema = new mongoose.Schema(
       longitude: { type: Number, default: 0 },
     },
     profilePicture: { type: String, default: '' },
-    tokens:{
+    tokens: {
       accessToken: { type: String, default: '' },
       refreshToken: { type: String, default: '' },
     },
-    lastLogin: { type: Date, default: Date.now },
+    lastLogin: { type: Date },
     isDeleted: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     isBlocked: { type: Boolean, default: false },
     isLocked: { type: Boolean, default: false },
     isExpired: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
 
-  userSchema.pre('save', async function () {
+userSchema.pre('save', async function () {
   if (!this.isModified('password')) return;
-
   this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
 });
 
@@ -51,9 +62,10 @@ userSchema.methods.comparePassword = function (candidate: string) {
   return bcrypt.compare(candidate, this.password);
 };
 
-export type UserDocument = mongoose.InferSchemaType<typeof userSchema> & {
-  _id: mongoose.Types.ObjectId;
+export type UserDocument = mongoose.HydratedDocument<
+  mongoose.InferSchemaType<typeof userSchema>
+> & {
   comparePassword(candidate: string): Promise<boolean>;
 };
 
-  export const User = mongoose.model('users', userSchema);
+export const User = mongoose.model('users', userSchema);
